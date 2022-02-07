@@ -81,7 +81,7 @@ def getImage():
         'Preis'.rjust(7),
         'Tag/Gesamt'.rjust(8),
         'High/low'.rjust(6),
-        currentTimeStamp.strftime("%a %d.%m. %H:%M").rjust(17)
+        currentTimeStamp.strftime("%a %d.%m.%H:%M").rjust(17)
     ]
     image = Image.new('L', (width, height), 0xFF)
     draw = ImageDraw.Draw(image)
