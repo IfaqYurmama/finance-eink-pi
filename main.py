@@ -55,8 +55,12 @@ def nfPlus(val):
 def drawImage(draw, startPoint, isin):
     chartImg = Image.new('RGBA', (145, 70), (255, 255, 255, 1))
     try:
-    	chartImg = Image.open(urllib.request.urlopen('https://www.tradegate.de/images/charts/tdt/' + isin + '.png'))
-    except:
+    	url = 'https://www.tradegate.de/images/charts/small/' + isin + '.png'
+    	chartImg = Image.open(urllib.request.urlopen(url))
+    #TODO: refactor and change this so the chart size fits better, perhaps reduce # of tickers per page
+    except Exception as inst:
+    	print(inst)
+    	print(url)
     	print('Fehler bei Bilderstellung für ',isin)
     chartImg = chartImg.resize((145, 70))
     chartImg = chartImg.crop(
