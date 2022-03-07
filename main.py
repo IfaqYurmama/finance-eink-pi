@@ -30,8 +30,8 @@ if IS_RASP:
     from waveshare_epd import epd3in7
     epd = epd3in7.EPD()
 
-print('Number of arguments:', len(sys.argv), 'arguments.')
-print('Argument List:', str(sys.argv))
+#print('Number of arguments:', len(sys.argv), 'arguments.')
+#print('Argument List:', str(sys.argv))
 
 locale.setlocale(locale.LC_ALL, 'de_AT.utf8')
 ubuntuFont = os.path.join(os.path.dirname(os.path.realpath(__file__)), "UbuntuMono-R.ttf")
@@ -162,10 +162,12 @@ def getImage():
     return image
 
 def draw(image):
+    print("sending image to display...")
     image=image.transpose(Image.ROTATE_180)
     epd.init(0)
     epd.display_4Gray(epd.getbuffer_4Gray(image))
     epd.sleep()
+    print("image successfully drawn.")
 
 if __name__ == '__main__':
     if IS_RASP:
