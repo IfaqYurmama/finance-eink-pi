@@ -9,29 +9,29 @@ symbols = [
 		}
 		]
 	},
-	{
-                "name": "AMAT",
-                "isin": "US0382221051",
+        {
+                "name": "VWCE",
+                "isin": "IE00BK5BQT80",
                 "lots": [
                 {
-                        "shares": 5,
-                        "cost": 115.26
+                        "shares": 110,
+                        "cost": 93.62
+                }
+                ]
+        },
+        {
+                "name": "XTP",
+                "isin": "DE0005765507",
+                "lots": [
+                {
+                        "shares": 23,
+                        "cost": 90.96
                 }
                 ]
         },
 	{
-                "name": "SIX3",
-                "isin": "DE0007231334",
-                "lots": [
-                {
-                        "shares": 7,
-                        "cost": 82.29
-                }
-                ]
-        },
-	{
-                "name": "CRWD",
-                "isin": "US22788C1053",
+                "name": ".DAX",
+                "isin": "LU0274211480",
                 "lots": [
                 {
                         "shares": 0,
@@ -40,37 +40,7 @@ symbols = [
                 ]
         },
 	{
-                "name": "CARR",
-                "isin": "US14448C1045",
-                "lots": [
-                {
-                        "shares": 11,
-                        "cost": 46.5
-                }
-                ]
-        },
-	{
-                "name": "TMO",
-                "isin": "US8835561023",
-                "lots": [
-                {
-                        "shares": 2,
-                        "cost": 541
-                }
-                ]
-        },
-	{
-		"name": "YOU",
-		"isin": "DE000A3CNK42",
-		"lots": [
-		{
-			"shares": 43,
-			"cost": 21.40
-		}
-		]
-	},
-	{
-		"name": ".DAX",
+		"name": "zDAX",
 		"isin": "LU0274211480",
 		"lots": [
 		{
@@ -89,14 +59,14 @@ symbols = [
 		}
 		]
 	},
-	{
-		"name": "META",
-		"isin": "US30303M1027",
-		"lots": [
-		{
-			"shares": 4,
-			"cost": 287.50
-		}
-		]
-	},
+        {
+                "name": "zNASDAQ",
+                "isin": "IE00B53SZB19",
+                "lots": [
+                {
+                        "shares": 0,
+                        "cost": 0
+                }
+                ]
+        },
 ]

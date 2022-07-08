@@ -123,7 +123,7 @@ def getImage():
                 dayLow = toNum(data['close'])
                 dayHigh = dayLow
             delta = toNum(data['delta'])
-            if symbol['name'].startswith("."):
+            if symbol['name'].startswith((".", "z")):
                 vals = [
                     symbol['name'],
                     nf(price).rjust(6)+" \u20ac",
