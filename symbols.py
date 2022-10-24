@@ -14,8 +14,8 @@ symbols = [
                 "isin": "IE00BK5BQT80",
                 "lots": [
                 {
-                        "shares": 110,
-                        "cost": 93.62
+                        "shares": 160,
+                        "cost": 94.53
                 }
                 ]
         },
@@ -51,7 +51,7 @@ symbols = [
 	},
 	{
 		"name": ".NASDAQ",
-		"isin": "IE00B53SZB19",
+		"isin": "DE000A0F5UF5",
 		"lots": [
 		{
 			"shares": 0,
@@ -61,7 +61,7 @@ symbols = [
 	},
         {
                 "name": "zNASDAQ",
-                "isin": "IE00B53SZB19",
+                "isin": "DE000A0F5UF5",
                 "lots": [
                 {
                         "shares": 0,
