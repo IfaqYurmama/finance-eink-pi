@@ -1,21 +1,21 @@
 symbols = [
         {
-                "name": "ETF",
+                "name": "VWCE",
                 "isin": "IE00BK5BQT80",
                 "lots": [
                 {
-                        "shares": 740,
-                        "cost": 98.47
+                        "shares":890,
+                        "cost": 104.66
                 }
                 ]
         },
 	{
-                "name": "GME",
-                "isin": "US36467W1099",
+                "name": "C6E",
+                "isin": "LU1681040223",
                 "lots": [
                 {
-                        "shares": 0,
-                        "cost": 0
+                        "shares": 70,
+                        "cost": 141.13
                 }
                 ]
         },
