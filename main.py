@@ -7,17 +7,21 @@ import time
 from datetime import datetime
 import signal
 import urllib.request, json
-from PIL import Image,ImageDraw,ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 from symbols import symbols
+
+
 class GracefulKiller:
     kill_now = False
+
     def __init__(self):
         signal.signal(signal.SIGINT, self.exit_gracefully)
         signal.signal(signal.SIGTERM, self.exit_gracefully)
 
-    def exit_gracefully(self,signum, frame):
+    def exit_gracefully(self, signum, frame):
         self.kill_now = True
+
 
 IS_RASP = os.environ['LOGNAME'] == 'pi'
 IS_FULL_REFRESH = time.localtime().tm_hour % 3 == 0
@@ -30,8 +34,8 @@ if IS_RASP:
     from waveshare_epd import epd3in7
     epd = epd3in7.EPD()
 
-#print('Number of arguments:', len(sys.argv), 'arguments.')
-#print('Argument List:', str(sys.argv))
+# print('Number of arguments:', len(sys.argv), 'arguments.')
+# print('Argument List:', str(sys.argv))
 
 locale.setlocale(locale.LC_ALL, 'de_AT.utf8')
 ubuntuFont = os.path.join(os.path.dirname(os.path.realpath(__file__)), "UbuntuMono-R.ttf")
@@ -40,46 +44,53 @@ font18 = ImageFont.truetype(ubuntuFont, 22)
 
 symbols = sorted(symbols, key=lambda k: k['name'])
 
+
 def nf(val):
     return locale.format_string('%.2f', val)
 
+
 def toNum(val):
-    if (type(val) == str):
+    if type(val) == str:
         val = val.replace('%', '')
         val = locale.atof(val)
     return val
 
+
 def nfPlus(val):
     return locale.format_string('%+.2f', val) + '€'
+
 
 def drawImage(draw, startPoint, isin):
     chartImg = Image.new('RGBA', (166, 80), (255, 255, 255, 1))
     try:
-    	url = 'https://www.tradegate.de/images/charts/small/' + isin + '.png'
-    	chartImg = Image.open(urllib.request.urlopen(url))
-    #TODO: refactor and change this so the chart size fits better, perhaps reduce # of tickers per page
+        url = 'https://www.tradegate.de/images/charts/small/' + isin + '.png'
+        chartImg = Image.open(urllib.request.urlopen(url))
+    # TODO: refactor and change this so the chart size fits better, perhaps reduce # of tickers per page
     except Exception as inst:
-    	print(inst)
-    	print(url)
-    	print('Fehler bei Bilderstellung für ',isin)
+        print(inst)
+        print(url)
+        print('Fehler bei Bilderstellung für ', isin)
     chartImg = chartImg.resize((166, 80))
     chartImg = chartImg.crop(
-       	(0, 0, chartImg.size[0], chartImg.size[1] - 17)
+        (0, 0, chartImg.size[0], chartImg.size[1] - 17)
     )
     chartImg = ImageOps.invert(chartImg.convert('L'))
     chartImg = ImageOps.autocontrast(chartImg, cutoff=8)
     offset = (startPoint[0], startPoint[1] - 20)
     draw.bitmap(offset, chartImg)
-    #chartImg.save(isin + '.png')
+    # chartImg.save(isin + '.png')
 
-width=480
-height=280
-lineHeight=70
+
+width = 480
+height = 280
+lineHeight = 70
 
 cols = [2, 85, 180,
-    280, 340]
+        280, 340]
+
+
 def getImage():
-    y=32
+    y = 32
     colTexts = [
         'WKN',
         'Preis'.rjust(7),
@@ -92,9 +103,9 @@ def getImage():
     for idx, colText in enumerate(colTexts):
         draw.text((cols[idx], 0), colText, font=font16, fill=0)
 
-    if sys.argv[1] == '1':
+    if len(sys.argv) > 1 and sys.argv[1] == '1':
         filtered_symbols = symbols[:4]
-    elif sys.argv[1] == '2':
+    elif len(sys.argv) > 1 and sys.argv[1] == '2':
         filtered_symbols = symbols[4:8]
     else:
         filtered_symbols = symbols[8:]
@@ -107,7 +118,7 @@ def getImage():
             tradesToday = True
             try:
                 price = toNum(data['last'])
-            except:
+            except Exception:
                 price = toNum(data['close'])
                 tradesToday = False
                 print('Aktie hat noch keine Trades heute, nehme Close Price')
@@ -116,72 +127,78 @@ def getImage():
             for lot in symbol['lots']:
                 cost += lot['shares'] * lot['cost']
                 worth += lot['shares'] * price
-            if(tradesToday):
+            if tradesToday:
                 dayLow = toNum(data['low'])
                 dayHigh = toNum(data['high'])
             else:
                 dayLow = toNum(data['close'])
                 dayHigh = dayLow
-            delta = toNum(data['delta'])
+            delta = toNum(data.get('delta', 0))
             if symbol['name'].startswith((".", "z")):
                 vals = [
                     symbol['name'],
-                    nf(price).rjust(6)+" \u20ac",
-                    str(data['delta']).rjust(9)+ " %",
+                    nf(price).rjust(6) + " \u20ac",
+                    str(data.get('delta')).rjust(9) + " %",
                     nf(dayHigh).rjust(6)
                 ]
+                lowerVals = [None, nf(price * lot['shares']).rjust(6) + " \u20ac", nfPlus(worth - cost).rjust(9), nf(dayLow).rjust(6)]
             else:
+                # Achtung: 'lot' bezieht sich hier auf die letzte Iteration aus der obigen Schleife.
+                # Die ursprüngliche Logik wurde beibehalten; falls mehrere Lots existieren, wird 'lot' die letzte Charge sein.
                 if lot['shares'] != 0:
-					vals = [
-						symbol['name'],
-						nf(price).rjust(6)+" \u20ac",
-						str(data['delta']).rjust(9)+ " %",
-						nf(dayHigh).rjust(6)
-					]
-					lowerVals = [
-						str(lot['shares']),
-						nf(price * lot['shares']).rjust(6)+" \u20ac",
-						nfPlus(worth - cost).rjust(9),
-						nf(dayLow).rjust(6)
-					]
+                    vals = [
+                        symbol['name'],
+                        nf(price).rjust(6) + " \u20ac",
+                        str(data.get('delta')).rjust(9) + " %",
+                        nf(dayHigh).rjust(6)
+                    ]
+                    lowerVals = [
+                        str(lot['shares']),
+                        nf(price * lot['shares']).rjust(6) + " \u20ac",
+                        nfPlus(worth - cost).rjust(9),
+                        nf(dayLow).rjust(6)
+                    ]
                 else:
-					vals = [
-						symbol['name'],
-						nf(price).rjust(6)+" \u20ac",
-						str(data['delta']).rjust(9)+ " %",
-						nf(dayHigh).rjust(6)
-					]
-					lowerVals = [
-						None,
-						nf(price * lot['shares']).rjust(6)+" \u20ac",
-						nfPlus(worth - cost).rjust(9),
-						nf(dayLow).rjust(6)
-					]
-	for idx, val in enumerate(vals):
+                    vals = [
+                        symbol['name'],
+                        nf(price).rjust(6) + " \u20ac",
+                        str(data.get('delta')).rjust(9) + " %",
+                        nf(dayHigh).rjust(6)
+                    ]
+                    lowerVals = [
+                        None,
+                        nf(price * lot['shares']).rjust(6) + " \u20ac",
+                        nfPlus(worth - cost).rjust(9),
+                        nf(dayLow).rjust(6)
+                    ]
+
+            for idx, val in enumerate(vals):
                 font = font18
                 offsetY = 0
                 lowerVal = lowerVals[idx]
                 if lowerVal:
                     offsetY = -9
                     font = font16
-                    draw.text((cols[idx], y+20 + offsetY), lowerVal, font=font16, fill=0)
+                    draw.text((cols[idx], y + 20 + offsetY), lowerVal, font=font16, fill=0)
                 draw.text((cols[idx], y + offsetY), val, font=font, fill=0)
 
             try:
                 drawImage(draw, (cols[-1], y), symbol['isin'])
             except Exception as e:
-                print("error drawing for", symbol['code'], e)
+                print("error drawing for", symbol.get('code', symbol.get('isin')), e)
         y += lineHeight
-        #print('symbol: ',symbol)
+        # print('symbol: ',symbol)
     return image
+
 
 def draw(image):
     print("sending image to display...")
-    image=image.transpose(Image.ROTATE_180)
+    image = image.transpose(Image.ROTATE_180)
     epd.init(0)
     epd.display_4Gray(epd.getbuffer_4Gray(image))
     epd.sleep()
     print("image successfully drawn.")
+
 
 if __name__ == '__main__':
     if IS_RASP:
@@ -190,3 +207,4 @@ if __name__ == '__main__':
     else:
         image = getImage()
         image.show()
+
