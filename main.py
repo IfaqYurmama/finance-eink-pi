@@ -53,7 +53,7 @@ def nfPlus(val):
     return locale.format_string('%+.2f', val) + '€'
 
 def drawImage(draw, startPoint, isin):
-    chartImg = Image.new('RGBA', (145, 70), (255, 255, 255, 1))
+    chartImg = Image.new('RGBA', (166, 80), (255, 255, 255, 1))
     try:
     	url = 'https://www.tradegate.de/images/charts/small/' + isin + '.png'
     	chartImg = Image.open(urllib.request.urlopen(url))
@@ -62,7 +62,7 @@ def drawImage(draw, startPoint, isin):
     	print(inst)
     	print(url)
     	print('Fehler bei Bilderstellung für ',isin)
-    chartImg = chartImg.resize((145, 70))
+    chartImg = chartImg.resize((166, 80))
     chartImg = chartImg.crop(
        	(0, 0, chartImg.size[0], chartImg.size[1] - 17)
     )
@@ -74,7 +74,7 @@ def drawImage(draw, startPoint, isin):
 
 width=480
 height=280
-lineHeight=52
+lineHeight=70
 
 cols = [2, 85, 180,
     280, 340]
@@ -93,11 +93,11 @@ def getImage():
         draw.text((cols[idx], 0), colText, font=font16, fill=0)
 
     if sys.argv[1] == '1':
-        filtered_symbols = symbols[:5]
+        filtered_symbols = symbols[:4]
     elif sys.argv[1] == '2':
-        filtered_symbols = symbols[5:10]
+        filtered_symbols = symbols[4:8]
     else:
-        filtered_symbols = symbols[10:]
+        filtered_symbols = symbols[8:]
 
     for symbol in filtered_symbols:
         print('aktie: ', symbol['name'])
@@ -131,19 +131,33 @@ def getImage():
                     nf(dayHigh).rjust(6)
                 ]
             else:
-                vals = [
-                    symbol['name']+"x"+str(lot['shares']),
-                    nf(price).rjust(6)+" \u20ac",
-                    str(data['delta']).rjust(9)+ " %",
-                    nf(dayHigh).rjust(6)
-                ]
-            lowerVals = [
-                None,
-                nf(price * lot['shares']).rjust(6)+" \u20ac",
-                nfPlus(worth - cost).rjust(9),
-                nf(dayLow).rjust(6)
-            ]
-            for idx, val in enumerate(vals):
+                if lot['shares'] != 0:
+					vals = [
+						symbol['name'],
+						nf(price).rjust(6)+" \u20ac",
+						str(data['delta']).rjust(9)+ " %",
+						nf(dayHigh).rjust(6)
+					]
+					lowerVals = [
+						str(lot['shares']),
+						nf(price * lot['shares']).rjust(6)+" \u20ac",
+						nfPlus(worth - cost).rjust(9),
+						nf(dayLow).rjust(6)
+					]
+                else:
+					vals = [
+						symbol['name'],
+						nf(price).rjust(6)+" \u20ac",
+						str(data['delta']).rjust(9)+ " %",
+						nf(dayHigh).rjust(6)
+					]
+					lowerVals = [
+						None,
+						nf(price * lot['shares']).rjust(6)+" \u20ac",
+						nfPlus(worth - cost).rjust(9),
+						nf(dayLow).rjust(6)
+					]
+	for idx, val in enumerate(vals):
                 font = font18
                 offsetY = 0
                 lowerVal = lowerVals[idx]

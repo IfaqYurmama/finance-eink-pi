@@ -20,16 +20,6 @@ symbols = [
                 ]
         },
 	{
-                "name": "IBKR",
-                "isin": "US45841N1072",
-                "lots": [
-                {
-                        "shares": 4,
-                        "cost": 94.01
-                }
-                ]
-        },
-	{
                 "name": ".DAX",
                 "isin": "LU0274211480",
                 "lots": [
